@@ -1,0 +1,4 @@
+https://github.com/KleoPetroff/react-webpack-boilerplate
+https://developer.spotify.com/technologies/widgets/spotify-play-button/
+https://github.com/onetune/spotify-web-helper
+https://github.com/cezary/react-webcam/blob/master/src/react-webcam.js
