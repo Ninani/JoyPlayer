@@ -19,12 +19,14 @@
     "axios": "^0.16.0",
     "cross-env": "^4.0.0",
     "history": "^2.0.1",
+    "oauth2-implicit": "^0.7.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-router": "^2.5.2",
     "react-webcam": "^0.0.14",
-    "shortid": "^2.2.6"
+    "shortid": "^2.2.6",
+    "spotify-web-api-js": "ukasiu/spotify-web-api-js"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
