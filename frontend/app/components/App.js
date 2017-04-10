@@ -7,8 +7,10 @@ import spotify from 'spotify-web-api-js';
 export default class App extends Component {
   handleSend = () => {
     const screenshot = this.webcam.getScreenshot();
-    axios.post('/data.json', {
+    axios.post('http://localhost:8081/data.json', {
       image: screenshot,
+    }, {
+      port: 8081
     })
     .then(response =>
       console.log(response)
