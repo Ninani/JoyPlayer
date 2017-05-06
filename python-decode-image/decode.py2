@@ -1,0 +1,23 @@
+import json
+import urlparse
+
+with open('img.json') as data_file:    
+    data = json.load(data_file)
+    image = data['image']
+    up = urlparse.urlparse(image)
+    head, data = up.path.split(',', 1)
+    bits = head.split(';')
+    mime_type = bits[0] if bits[0] else 'text/plain'
+    charset, b64 = 'ASCII', False
+    for bit in bits:
+        if bit.startswith('charset='):
+            charset = bit[8:]
+        elif bit == 'base64':
+            b64 = True
+
+    # Do something smart with charset and b64 instead of assuming
+    plaindata = data.decode("base64")
+
+    # Do something smart with mime_type
+    with open('img.jpg', 'wb') as f:
+        f.write(plaindata)

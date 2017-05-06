@@ -52,7 +52,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Webcam ref={(c) => { this.webcam = c; }} audio={false} />
+        <Webcam ref={(c) => { this.webcam = c; }} audio={false} screenshotFormat="image/jpeg" />
         <button onClick={this.handleSend}>Send</button>
         <button onClick={this.handleAuthorize}>Play something nice</button>
       </div>
