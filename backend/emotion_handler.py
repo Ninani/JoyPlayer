@@ -16,6 +16,9 @@ def recognize_emotion(json_data):
     head, data = up.path.split(',', 1)
     plain_data = data.decode("base64")
 
+    if not os.path.exists(TMP_IMAGE_STORAGE):
+        os.makedirs(TMP_IMAGE_STORAGE)
+
     with open(IMAGE_FILE, 'wb') as f:
         f.write(plain_data)
 
