@@ -9,4 +9,7 @@ or follow this tutorial: [opencv homepage](http://docs.opencv.org/2.4/doc/tutori
 `python server.py`
 
 
+### observe face detection:
+
+comment `directory_cleanup(TMP_IMAGE_STORAGE)` in emotion_handler.py (line 29)
 
