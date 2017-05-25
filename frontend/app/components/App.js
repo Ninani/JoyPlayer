@@ -3,8 +3,13 @@ import Webcam from 'react-webcam';
 import axios from 'axios';
 import authorize from 'oauth2-implicit'
 import spotify from 'spotify-web-api-js';
+import ReactInterval from 'react-interval';
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
   handleSend = () => {
     const screenshot = this.webcam.getScreenshot();
     axios.post('http://localhost:8081/data.json', {
@@ -12,8 +17,9 @@ export default class App extends Component {
     }, {
       port: 8081
     })
-    .then(response =>
-      console.log(response)
+    .then(response => {
+        this.setState({emotion: response.data});
+      }
     )
     .catch(error =>
       console.log(error)
@@ -55,8 +61,10 @@ export default class App extends Component {
     return (
       <div>
         <Webcam ref={(c) => { this.webcam = c; }} audio={false} screenshotFormat="image/jpeg" />
-        <button onClick={this.handleSend}>Send</button>
         <button onClick={this.handleAuthorize}>Play something nice</button>
+        Current emotion: {this.state.emotion}
+        <ReactInterval timeout={1000} enabled={true}
+                  callback={() => this.handleSend()} />
       </div>
     );
   }
