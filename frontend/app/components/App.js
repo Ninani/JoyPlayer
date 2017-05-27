@@ -13,7 +13,7 @@ import slight_smile from 'react-svg-emojione/dist/slight_smile';
 import frowning2 from 'react-svg-emojione/dist/frowning2';
 import astonished from 'react-svg-emojione/dist/astonished';
 
-
+import Spotify from './Spotify';
 
 const emotions = {
   'neutral': {
@@ -72,29 +72,6 @@ export default class App extends Component {
     }
   }
 
-  handleAuthorize = () => {
-    const credentials = authorize({
-      auth_uri: 'https://accounts.spotify.com/authorize',
-      client_id: '1bd9ce6008794d0d81b61dc5c100ef86',
-      redirect_uri: 'http://localhost:8080',
-      scope: ['user-read-private', 'user-read-email', 'user-modify-playback-state'],
-    })
-    if(credentials) {
-      this.spotifyClient.setAccessToken(credentials.accessToken)
-      this.spotifyClient.getMe().then(function(data) {
-        console.log('Me: ', data);
-      }, function(err) {
-        console.error(err);
-      });
-      this.spotifyClient.playTracks({ uris: ['spotify:track:2dJVX40gxhBSPfoPP8nmRo'] }).then(function(data) {
-        console.log(data);
-      }, function(err) {
-        console.error(err);
-      });
-
-    }
-  }
-
   emoticon = () => {
     if(!this.state.emotion) {
       return null;
@@ -110,23 +87,28 @@ export default class App extends Component {
   render() {
     return (
       <div style={style.container}>
-        <Paper style={style.paperCamera} zDepth={4}>
-          <Webcam
-            ref={(c) => { this.webcam = c; }}
-            audio={false}
-            screenshotFormat="image/jpeg"
-            width={style.paperCamera.width}
-            height={style.paperCamera.height}
+        <div style={style.row}>
+          <Paper style={style.paperCamera} zDepth={4}>
+            <Webcam
+              ref={(c) => { this.webcam = c; }}
+              audio={false}
+              screenshotFormat="image/jpeg"
+              width={style.paperCamera.width}
+              height={style.paperCamera.height}
+            />
+          </Paper>
+          <Paper style={style.paperRight} zDepth={4}>
+            <div style={style.emojiContainer}>{this.emoticon()}</div>
+          </Paper>
+          <ReactInterval
+            timeout={1000}
+            enabled={true}
+            callback={() => this.handleSend()}
           />
-        </Paper>
-        <Paper style={style.paperRight} zDepth={4}>
-          <div style={style.emojiContainer}>{this.emoticon()}</div>
-        </Paper>
-        <ReactInterval
-          timeout={1000}
-          enabled={true}
-          callback={() => this.handleSend()}
-        />
+        </div>
+        <div style={style.row}>
+          <Spotify/>
+        </div>
       </div>
     );
   }
@@ -135,7 +117,13 @@ export default class App extends Component {
 const style = {
   container: {
     display: 'flex',
-    justifyContent: 'center'
+    alignContent: 'center',
+    flexDirection: 'column'
+  },
+  row: {
+    display: 'flex',
+    justifyContent: 'center',
+    flex: 1
   },
   paperCamera: {
     height: 240,

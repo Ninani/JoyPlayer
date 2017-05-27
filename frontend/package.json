@@ -30,9 +30,10 @@
     "react-interval": "^2.0.1",
     "react-router": "^2.5.2",
     "react-svg-emojione": "^1.2.0",
+    "react-toggle": "^4.0.1",
     "react-webcam": "^0.0.14",
     "shortid": "^2.2.6",
-    "spotify-web-api-js": "ukasiu/spotify-web-api-js"
+    "spotify-web-api-js": "^0.22.0"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
