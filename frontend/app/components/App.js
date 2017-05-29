@@ -46,7 +46,9 @@ const emotions = {
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      window: []
+    };
   }
   handleSend = () => {
     const screenshot = this.webcam.getScreenshot();
@@ -56,7 +58,11 @@ export default class App extends Component {
       port: 8081
     })
     .then(response => {
-        this.setState({emotion: response.data});
+      console.log(this.state.window)
+        this.setState({
+          emotion: response.data,
+          window: (new Array(response.data)).concat(this.state.window.slice(0, 10))
+        });
       }
     )
     .catch(error =>
@@ -107,7 +113,7 @@ export default class App extends Component {
           />
         </div>
         <div style={style.row}>
-          <Spotify/>
+          <Spotify window={this.state.window}/>
         </div>
       </div>
     );
