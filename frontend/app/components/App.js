@@ -58,11 +58,11 @@ export default class App extends Component {
       port: 8081
     })
     .then(response => {
-      console.log(this.state.window)
         this.setState({
           emotion: response.data,
-          window: (new Array(response.data)).concat(this.state.window.slice(0, 10))
+          window: (new Array(response.data)).concat(this.state.window.slice(0, 30))
         });
+        this.spotify.tick();
       }
     )
     .catch(error =>
@@ -70,23 +70,19 @@ export default class App extends Component {
     );
   }
 
-  componentDidMount = () => {
-    this.spotifyClient = new spotify();
-
-    if(window.location.href.includes('access_token')) {
-      this.handleAuthorize()
-    }
+  winningEmotion = () => {
+    return _.maxBy(_.transform(_.countBy(this.state.window), (res, v, k) => { res.push({ emotion: k, score: v }) }, []), 'score')
   }
 
-  emoticon = () => {
-    if(!this.state.emotion) {
+  emoticon = (emotion) => {
+    if(!emotion) {
       return null;
     }
     return [
       <div style={style.emoji} key="emoticon">
-        {emotions[this.state.emotion].component}
+        {emotions[emotion].component}
       </div>,
-      <div style={style.emoji} key="desc">{this.state.emotion}</div>
+      <div style={style.emoji} key="desc">{emotion}</div>
     ];
   }
 
@@ -104,7 +100,10 @@ export default class App extends Component {
             />
           </Paper>
           <Paper style={style.paperRight} zDepth={4}>
-            <div style={style.emojiContainer}>{this.emoticon()}</div>
+            <div style={style.paperRightContainer}>
+              <div style={style.emojiContainer}>now{this.emoticon(this.state.emotion)}</div>
+              {this.winningEmotion() ? <div style={style.emojiContainer}><div>dominating <br/>over last 30s</div>{this.emoticon(this.winningEmotion().emotion)}</div> : null }
+            </div>
           </Paper>
           <ReactInterval
             timeout={1000}
@@ -113,7 +112,11 @@ export default class App extends Component {
           />
         </div>
         <div style={style.row}>
-          <Spotify window={this.state.window}/>
+          <Spotify 
+            ref={(c) => { this.spotify = c; }}
+            window={this.state.window}
+            winningEmotion={this.winningEmotion}
+          />
         </div>
       </div>
     );
@@ -148,8 +151,15 @@ const style = {
     // flexDirection: 'column',
     flexWrap: 'wrap'
   },
+  paperRightContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'row',
+  },
   emojiContainer: {
     display: 'flex',
+    padding: 20,
     justifyContent: 'center',
     alignContent: 'center',
     flexDirection: 'column',

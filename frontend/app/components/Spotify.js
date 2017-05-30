@@ -5,6 +5,7 @@ import Toggle from 'react-toggle';
 import axios from 'axios';
 import authorize from 'oauth2-implicit'
 import spotify from 'spotify-web-api-js';
+import _ from 'lodash';
 
 const credentialsParams = {
   auth_uri: 'https://accounts.spotify.com/authorize',
@@ -35,6 +36,7 @@ export default class Spotify extends Component {
 
   enableSpotify = () => {
     localStorage.setItem('spotifyEnabled', true);
+    localStorage.setItem('winningEmotion', this.props.winningEmotion().emotion);
     this.setState({toggleChecked: true})
     this.handleAuthorize()
   }
@@ -59,6 +61,17 @@ export default class Spotify extends Component {
     })
   }
 
+  songForEmotion = (emotion, ok, err) => {
+    axios.get('http://localhost:8081/track/' + emotion, {
+      port: 8081
+    })
+    .then(response => { ok(response.data) })
+    .catch(error => {
+      console.log(error)
+      err(error)
+    });
+  }
+
   addToPlaylist = (uris, ok, err) => {
     this.spotifyClient.addTracksToPlaylist(this.state.userData.id, this.state.playlist.id, uris).then(ok, err)
   }
@@ -67,12 +80,19 @@ export default class Spotify extends Component {
     this.spotifyClient.replaceTracksInPlaylist(this.state.userData.id, this.state.playlist.id, uris).then(ok, err)
   }
 
-  playPlaylist = (ok, err) => {
-    if(this.state.playStarted) { return; }
-    this.spotifyClient.play({context_uri: this.state.playlist.uri}).then(() => {
-      this.setState({playStarted: true})
-      ok();
-    }, err);
+  playPlaylist = (song, ok, err) => {
+    // if(this.state.playStarted) { return; }
+    // this.spotifyClient.play({context_uri: this.state.playlist.uri, uri: song.uri}).then(() => {
+    //   this.setState({playStarted: true})
+    //   if(ok) ok();
+    // }, err);
+  }
+
+  tick = () => {
+    if(!this.state.toggleChecked) { return; }
+    this.songForEmotion(this.props.winningEmotion().emotion, (song) => {
+      this.replaceInPlaylist(['spotify:track:' + song], () => {})
+    });
   }
 
   // setShuffle
@@ -100,9 +120,12 @@ export default class Spotify extends Component {
       sessionStorage.setItem('spotifyAccessToken', credentials.accessToken);
       this.spotifyClient.setAccessToken(credentials.accessToken);
       this.spotifyClient.getMe().then((data) => {
-        console.log(data)
         this.setState({userData: data})
-        this.ensurePlaylist(()=>this.replaceInPlaylist(['spotify:track:2dJVX40gxhBSPfoPP8nmRo'], this.playPlaylist));
+        this.ensurePlaylist(()=> {
+          this.songForEmotion(localStorage.getItem('winningEmotion'), (song) => {
+            this.replaceInPlaylist(['spotify:track:' + song], () => this.playPlaylist('spotify:track:' + song))
+          });
+        });
       }, (err) => {
         console.error(err);
       });

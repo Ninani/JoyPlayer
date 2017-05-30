@@ -20,7 +20,11 @@ def get_track(mood):
         return "5Q30xdABnojqN3wBIhrsQp"
     elif mood == "anger":
         return "1sV6neOqXX4jglsFUz6QX9"
+    elif mood == "disgust":
+        return "1sV6neOqXX4jglsFUz6QX9"
     elif mood == "neutral":
+        return "3dMYjix0jWSDGtwzfHZpMo"
+    elif mood == "surprise":
         return "2w9w4X0qTu81r4jJ1afU8E"
 
 if __name__ == "__main__":
