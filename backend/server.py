@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
-from emotion_handler import recognize_emotion
+from emotion_handler import recognize_emotion, retrain_model
 
 app = Flask(__name__)
 CORS(app)
@@ -11,6 +11,10 @@ def get_emotion():
     image_data = request.get_data()
     return recognize_emotion(image_data)
 
+@app.route("/update-model/<string:mood>", methods=["POST"])
+def update_model(mood):
+    image_data = request.get_data()
+    return retrain_model(image_data, mood)
 
 @app.route("/track/<string:mood>", methods=["GET"])
 def get_track(mood):
