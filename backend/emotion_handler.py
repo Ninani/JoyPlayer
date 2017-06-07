@@ -26,7 +26,7 @@ def recognize_emotion(json_data):
     if(face_detected):
         emotion = predict_emotion(cropped_face)
     else:
-        emotion = "neutral"
+        emotion = "no_head"
 
     # remove temporarily saved images from TMP_IMAGE_STORAGE
     directory_cleanup(TMP_IMAGE_STORAGE)

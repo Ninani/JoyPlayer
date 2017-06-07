@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Webcam from 'react-webcam';
 import axios from 'axios';
-import authorize from 'oauth2-implicit'
+import authorize from 'oauth2-implicit';
 import spotify from 'spotify-web-api-js';
 import ReactInterval from 'react-interval';
 import Emojify from 'react-emojione';
@@ -12,33 +12,38 @@ import confused from 'react-svg-emojione/dist/confused';
 import slight_smile from 'react-svg-emojione/dist/slight_smile';
 import frowning2 from 'react-svg-emojione/dist/frowning2';
 import astonished from 'react-svg-emojione/dist/astonished';
+import head_bandage from 'react-svg-emojione/dist/head_bandage';
 
 import Spotify from './Spotify';
 
 const emotions = {
-  'neutral': {
+  no_head: {
+    icon: ':head_bandage:',
+    component: head_bandage(),
+  },
+  neutral: {
     icon: ':no_mouth:',
-    component: no_mouth()
+    component: no_mouth(),
   },
-  'anger': {
+  anger: {
     icon: ':angry:',
-    component: angry()
+    component: angry(),
   },
-  'disgust': {
+  disgust: {
     icon: ':confused:',
-    component: confused()
+    component: confused(),
   },
-  'happy': {
+  happy: {
     icon: ':slight_smile:',
-    component: slight_smile()
+    component: slight_smile(),
   },
-  'sadness': {
+  sadness: {
     icon: ':frowning2:',
-    component: frowning2()
+    component: frowning2(),
   },
-  'surprise': {
+  surprise: {
     icon: ':astonished:',
-    component: astonished()
+    component: astonished(),
   },
 };
 
@@ -47,7 +52,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      window: []
+      window: [],
     };
   }
   handleSend = () => {
@@ -55,34 +60,32 @@ export default class App extends Component {
     axios.post('http://localhost:8081/data.json', {
       image: screenshot,
     }, {
-      port: 8081
+      port: 8081,
     })
-    .then(response => {
-        this.setState({
-          emotion: response.data,
-          window: (new Array(response.data)).concat(this.state.window.slice(0, 30))
-        });
-        this.spotify.tick();
-      }
+    .then((response) => {
+      this.setState({
+        emotion: response.data,
+        window: (new Array(response.data)).concat(this.state.window.slice(0, 30)),
+      });
+      this.spotify.tick();
+    },
     )
     .catch(error =>
-      console.log(error)
+      console.log(error),
     );
   }
 
-  winningEmotion = () => {
-    return _.maxBy(_.transform(_.countBy(this.state.window), (res, v, k) => { res.push({ emotion: k, score: v }) }, []), 'score')
-  }
+  winningEmotion = () => _.maxBy(_.transform(_.countBy(this.state.window), (res, v, k) => { res.push({ emotion: k, score: v }); }, []), 'score')
 
   emoticon = (emotion) => {
-    if(!emotion) {
+    if (!emotion) {
       return null;
     }
     return [
       <div style={style.emoji} key="emoticon">
         {emotions[emotion].component}
       </div>,
-      <div style={style.emoji} key="desc">{emotion}</div>
+      <div style={style.emoji} key="desc">{emotion}</div>,
     ];
   }
 
@@ -102,17 +105,17 @@ export default class App extends Component {
           <Paper style={style.paperRight} zDepth={4}>
             <div style={style.paperRightContainer}>
               <div style={style.emojiContainer}>now{this.emoticon(this.state.emotion)}</div>
-              {this.winningEmotion() ? <div style={style.emojiContainer}><div>dominating <br/>over last 30s</div>{this.emoticon(this.winningEmotion().emotion)}</div> : null }
+              {this.winningEmotion() ? <div style={style.emojiContainer}><div>dominating <br />over last 30s</div>{this.emoticon(this.winningEmotion().emotion)}</div> : null }
             </div>
           </Paper>
           <ReactInterval
             timeout={1000}
-            enabled={true}
+            enabled
             callback={() => this.handleSend()}
           />
         </div>
         <div style={style.row}>
-          <Spotify 
+          <Spotify
             ref={(c) => { this.spotify = c; }}
             window={this.state.window}
             winningEmotion={this.winningEmotion}
@@ -127,12 +130,12 @@ const style = {
   container: {
     display: 'flex',
     alignContent: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   row: {
     display: 'flex',
     justifyContent: 'center',
-    flex: 1
+    flex: 1,
   },
   paperCamera: {
     height: 240,
@@ -149,7 +152,7 @@ const style = {
     justifyContent: 'center',
     alignContent: 'center',
     // flexDirection: 'column',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   paperRightContainer: {
     display: 'flex',
@@ -165,6 +168,6 @@ const style = {
     flexDirection: 'column',
   },
   emoji: {
-    width: 100
-  }
+    width: 100,
+  },
 };
